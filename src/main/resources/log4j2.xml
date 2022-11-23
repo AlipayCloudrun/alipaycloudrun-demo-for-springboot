@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appenders>
+        <!-- 控制台输出 -->
+        <console name="STDOUT-APPENDER" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5p %c{2} %L %M - %msg%n"/>
+        </console>
+
+        <!-- fileName：输出路径  filePattern：命名规则 -->
+        <RollingFile name="APP-DEFAULT" fileName="logs/app-default.log"
+                     filePattern="logs/app-default.log.%d{yyyy-MM-dd}">
+            <Filters>
+                <ThresholdFilter level="all" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <!-- 输出格式 -->
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p %c{2} %L %M - %msg%n" charset="UTF-8"/>
+            <Policies>
+                <!--  每天生成一个日志文件  -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <!-- SizeBasedTriggeringPolicy单个文件的大小限制 -->
+                <SizeBasedTriggeringPolicy size="100 MB"/>
+            </Policies>
+            <!-- DefaultRolloverStrategy同一个文件下的最大文件数 -->
+            <DefaultRolloverStrategy max="50"/>
+        </RollingFile>
+
+
+        <RollingFile name="COMMON-ERROR" fileName="logs/common-error.log"
+                     filePattern="logs/common-error.log.%d{yyyy-MM-dd}">
+            <Filters>
+                <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <!-- 输出格式 -->
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p %c{2} %L %M - %msg%xEx%n"
+                           charset="UTF-8"/>
+            <Policies>
+                <!--  每天生成一个日志文件  -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <!-- SizeBasedTriggeringPolicy单个文件的大小限制 -->
+                <SizeBasedTriggeringPolicy size="100MB"/>
+            </Policies>
+            <!-- DefaultRolloverStrategy同一个文件下的最大文件数 -->
+            <DefaultRolloverStrategy max="50"/>
+        </RollingFile>
+
+        <RollingFile name="DAL-DIGEST" fileName="logs/dal-digest.log"
+                     filePattern="logs/dal-digest.log.%d{yyyy-MM-dd}"
+            append="true">
+            <PatternLayout
+                    pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p %c{2} - %m%n%throwable"
+                    charset="UTF-8"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="2 GB"/>
+            </Policies>
+            <DefaultRolloverStrategy/>
+        </RollingFile>
+
+        <RollingFile name="MVC-DIGEST" fileName="logs/mvc-digest.log"
+                     filePattern="logs/mvc-digest.log.%d{yyyy-MM-dd}"
+            append="true">
+            <PatternLayout
+                    pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p %c{2} - %m%n%throwable"
+                    charset="UTF-8"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="2 GB"/>
+            </Policies>
+            <DefaultRolloverStrategy/>
+        </RollingFile>
+        <RollingFile name="SAL-DIGEST" fileName="logs/sal-digest.log"
+                     filePattern="logs/sal-digest.log.%d{yyyy-MM-dd}"
+                     append="true">
+            <PatternLayout
+                    pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p %c{2} - %m%n%throwable"
+                    charset="UTF-8"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="2 GB"/>
+            </Policies>
+            <DefaultRolloverStrategy/>
+        </RollingFile>
+    </appenders>
+
+    <loggers>
+        <!--过滤掉spring无用的debug信息-->
+        <AsyncLogger name="org.springframework" level="error"></AsyncLogger>
+
+        <AsyncLogger name="STDOUT" additivity="false" level="DUBUG">
+            <AppenderRef ref="STDOUT-APPENDER"/>
+        </AsyncLogger>
+
+        <AsyncLogger name="COMMON-ERROR-LOGGER" additivity="false" level="INFO">
+            <AppenderRef ref="COMMON-ERROR"/>
+        </AsyncLogger>
+
+        <AsyncLogger name="APP-DEFAULT-LOGGER" additivity="false" level="INFO">
+            <AppenderRef ref="APP-DEFAULT"/>
+            <AppenderRef ref="COMMON-ERROR"/>
+        </AsyncLogger>
+
+        <AsyncLogger name="com.alipay.cloudrun" additivity="false" level="INFO">
+            <AppenderRef ref="APP-DEFAULT"/>
+            <AppenderRef ref="COMMON-ERROR"/>
+        </AsyncLogger>
+
+        <AsyncLogger name="DAL-LOGGER" additivity="false" level="INFO">
+            <AppenderRef ref="DAL-DIGEST"/>
+            <AppenderRef ref="COMMON-ERROR"/>
+        </AsyncLogger>
+
+        <AsyncLogger name="MVC-LOGGER" additivity="false" level="INFO">
+            <AppenderRef ref="MVC-DIGEST"/>
+            <AppenderRef ref="COMMON-ERROR"/>
+        </AsyncLogger>
+
+        <AsyncLogger name="SAL-LOGGER" additivity="false" level="INFO">
+            <AppenderRef ref="SAL-DIGEST"/>
+            <AppenderRef ref="COMMON-ERROR"/>
+        </AsyncLogger>
+
+        <AsyncRoot level="info">
+            <AppenderRef ref="STDOUT-APPENDER"/>
+            <AppenderRef ref="APP-DEFAULT"/>
+            <AppenderRef ref="COMMON-ERROR"/>
+        </AsyncRoot>
+    </loggers>
+
+</configuration>

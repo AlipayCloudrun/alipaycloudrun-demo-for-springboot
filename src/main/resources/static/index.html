@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8"/>
+    <link rel="shortcut icon" href="imglogo.png" mce_href="img/logo.png" type="image/x-icon"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+
+    <title>欢迎使用小程序云托管</title>
+
+    <script src="js/jquery-1.11.1.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Droid Sans", "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Droid Sans Fallback", "Microsoft YaHei", sans-serif;
+        }
+
+        .title-logo {
+            width: 180px;
+            height: 80px;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        @media screen and (min-width: 1200px) {
+            body .container {
+                margin-top: 160px;
+                margin-bottom: 272px;
+            }
+        }
+
+        @media screen and (max-width: 1919px) {
+            body .container {
+                margin-top: 76px;
+                margin-bottom: 128px;
+            }
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            width: 320px;
+        }
+
+        .title-text {
+            width: 320px;
+            height: 48px;
+            text-align: center;
+            margin-top: 16px;
+            font-size: 32px;
+            opacity: 0.9;
+            font-weight: 500;
+            color: #000000;
+            letter-spacing: 0;
+            line-height: 48px;
+        }
+
+        .list-text {
+            width: 320px;
+            height: 16px;
+            text-align: center;
+            margin-top: 16px;
+            font-size: 18px;
+            opacity: 0.9;
+            font-weight: 500;
+            color: #000000;
+            letter-spacing: 0;
+            line-height: 10px;
+        }
+
+        .foot-text {
+            width: 320px;
+            height: 16px;
+            text-align: center;
+            margin-top: 16px;
+            font-size: 24px;
+            opacity: 0.9;
+            font-weight: 500;
+            color: #000000;
+            letter-spacing: 0;
+            line-height: 10px;
+        }
+
+        .button_test {
+            width: 160px;
+            height: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #FFFFFF;
+            background-color: #4C9AF7;
+            border: none;
+            border-radius: 4px;
+            margin-top: 4px;
+            cursor: pointer;
+        }
+
+        .button_add {
+            text-align: center;
+            font-size: 10px;
+            color: #FFFFFF;
+            background-color: #4C9AF7;
+            border: none;
+            border-radius: 4px;
+            margin-top: 4px;
+            cursor: pointer;
+        }
+
+        table {
+            border-collapse: collapse;
+            border: 1px solid #dddddd;
+            border-radius: 2px;
+            margin-top: 4px;
+        }
+
+        table td {
+            border-top: 1px solid #dddddd;
+            border-bottom: 1px solid #dddddd;
+            text-align:center;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+        table th {
+            border-top: 1px solid #dddddd;
+            border-bottom: 1px solid #dddddd;
+            background-color: #83c2fd;
+            color: #FFFFFF;
+            text-align:center;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+        .id_col{
+            width: 20px;
+            display: none;
+        }
+
+        .record_col{
+            width: 100px;
+        }
+
+        .dbError{
+            color: crimson;
+        }
+        .testService{
+            color: chocolate;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        function testService() {
+            $.ajax("/service", {
+                method: "GET",
+            }).done(function (res) {
+                $("#testService").val("服务接口：/service \n返回结果：" + res);
+            });
+        }
+
+        function testDatabase() {
+            $.ajax("/database/getList", {
+                method: "GET",
+            }).done(function (res) {
+                if (res.success === true && res.data!=null) {
+
+                    $("#tab").css("display", "block");
+                    var data = res.data;
+                    var str = "";//定义用于拼接的字符串
+                    $("#tab .appendData").remove();
+                    for (var i = 0; i < data.length; i++) {
+                        //拼接表格的行和列
+                        str = "<tr class='appendData'><td class='id_col'>" + data[i].id + "</td><td class='record_col'>" + data[i].record + "</td><td>"
+                            + data[i].gmtCreate.replace(/T/g,'  ').substring(0,20) + "</td><td>" +
+                            "<a onclick='testDeleteRecord("+data[i].id+")' href='javascript:void(0);'>删除</a></td></tr>";
+                        //追加到table中
+                        $("#tab").append(str);
+                    }
+                }else {
+                    $("#dbError").val("数据库异常,请参照项目目录下README.md文件配置数据库")
+                }
+            });
+        }
+
+        function testAddRecord() {
+            const record = $("#record").val();
+            console.log(record);
+            if (record === null || record === "") {
+                testDatabase();
+                return;
+            }
+            $.ajax("/database/addRecord", {
+                method: "POST",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    "record": $("#record").val()
+                })
+            }).done(function (res) {
+                if (res.success === false || res.data === null) {
+                    $("#dbError").val("数据库异常,请参照项目目录下README.md文件配置数据库")
+                }
+                testDatabase();
+            });
+        }
+
+        function testDeleteRecord(id) {
+            $.ajax({
+                type: "get", // 以get方式发起请求
+                contentType: "application/json; charset=utf-8",
+                url: "/database/deleteRecord?id=" + id,
+                success(data) {
+                    if (data.success === false || data.data === null) {
+                        $("#dbError").val("数据库异常,请参照项目目录下README.md文件配置数据库")
+                    }
+                    testDatabase();
+                }
+            })
+        }
+    </script>
+
+    <div class="container">
+        <div class="title">
+            <img class="title-logo" src="img/logo.png"/>
+            <div style="display: inline; margin-bottom: 48px" class="title-text">欢迎使用小程序云托管</div>
+        </div>
+
+        <span class="list-text">服务发布与访问</span>
+        <button type="button" onclick="testService()" class="button_test">测试服务访问</button>
+        <output id="testService" class="testService"></output>
+        <br/>
+
+        <span class="list-text">数据库服务</span>
+        <button type="button" onclick="testDatabase()" class="button_test">测试数据库访问</button>
+        <output id="dbError" class="dbError"></output>
+        <table id="tab" style="display: none">
+            <tr>
+                <td colspan="4">
+                    <div>
+                        <input type="text" placeholder="请输入..." id="record" />
+                        <button type="button" onclick="testAddRecord()" class="button_add">插入一条记录</button>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th hidden="hidden" style="width: 20px">id</th>
+                <th style="width: 100px">记录信息</th>
+                <th style="width: 180px">创建时间</th>
+                <th style="width: 40px">操作</th>
+            </tr>
+        </table>
+
+        <br/><br/><br/>
+        <span class="foot-text">快速入手</span>
+        <hr style="display: block; width: 320px"/>
+        <a href="https://opendocs.alipay.com/pre-open/04n0zd" target="_blank">
+            开发者文档
+        </a>
+    </div>
+
+</body>
+
+</html>
