@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS  `record_info` (
 前往云托管平台下的**服务列表**，找到自己的服务并进入，在**服务设置**里找到**环境变量**并添加如下KV
 ```text
 DATABASE_USERNAME:申请的数据库账号
-DATABASE_PASSWORD:账号对于密码
+DATABASE_PASSWORD:账号对应密码
 DATABASE_HOST:数据库域名(需带端口，示例127.0.0.1:3306),在数据库服务申请成功时可以拿到
 DATABASE_NAME:建立的数据库
 ```
@@ -50,7 +50,7 @@ cd /app/logs
 运行AlipayCloudrunApplication中的main方法，快速启动，本地访问http://localhost会弹出欢迎页面
 #### 3.数据库连接
 前往application.properties，将数据库账号密码替换为自己本地数据库，同时将127.0.0.1:3306与db_test替换为自己本地数据库连接端口与数据库名。
-示例建表语句(注意database是需要提前)：
+示例建表语句(注意database需要替换为自己的数据库)：
 ```sql
 USE database;
 CREATE TABLE IF NOT EXISTS  `record_info` (
