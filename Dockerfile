@@ -1,5 +1,3 @@
-# 由cpt-run生成，若遇到问题请根据实际情况修改
-
 # 采用java官方镜像做为构建镜像
 FROM maven:3.6.0-jdk-8-slim AS build
 
@@ -20,6 +18,10 @@ WORKDIR /app
 
 # 将构建产物拷贝到运行时的工作目录中
 COPY --from=build /app/**/*.jar ./
+
+# 暴露端口
+# 此处端口必须与构建小程序服务端时填写的服务端口和探活端口一致，不然会部署失败
+EXPOSE 80
 
 # 安装基础命令
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories && \
