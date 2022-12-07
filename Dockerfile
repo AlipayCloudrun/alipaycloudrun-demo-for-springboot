@@ -10,7 +10,7 @@ WORKDIR /app
 COPY . .
 
 # 编译项目
-RUN mvn clean package
+RUN mvn -B -e -U -s settings.xml clean package
 
 # 采用java或者alpine官方镜像做为运行时镜像
 FROM alpine:3.13 
