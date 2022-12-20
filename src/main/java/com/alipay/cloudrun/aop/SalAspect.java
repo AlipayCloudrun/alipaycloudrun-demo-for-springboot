@@ -58,7 +58,7 @@ public class SalAspect {
             long threadID = Thread.currentThread().getId();
             String call = joinPoint.getSignature().toString();
             String str = JSON.toJSONString(Arrays.asList(joinPoint.getArgs()));
-            String msg = String.format("[%d],[%s],[%dms],[%s],%s", threadID, call, rt, res ? "Y" : "N", str);
+            String msg = String.format("%d,%s,%dms,%s,%s", threadID, call, rt, res ? "Y" : "N", str);
 
             if (logger.isInfoEnabled()) {
                 logger.info(msg);

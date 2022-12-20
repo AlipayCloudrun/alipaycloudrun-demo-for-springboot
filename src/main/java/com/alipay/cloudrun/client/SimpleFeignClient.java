@@ -15,6 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 public interface SimpleFeignClient {
 
     @SalPointCut
-    @GetMapping("/service2")
-    String service2();
+    @GetMapping("/service")
+    String service();
 }

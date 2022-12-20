@@ -3,8 +3,10 @@
 
 <head>
     <meta charset="utf-8"/>
-    <link rel="shortcut icon" href="img/logo.png" mce_href="img/logo.png" type="image/x-icon"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <link rel="shortcut icon" href="https://img.alicdn.com/tfs/TB1qEwuzrj1gK0jSZFOXXc7GpXa-32-32.ico"
+          mce_href="https://img.alicdn.com/tfs/TB1qEwuzrj1gK0jSZFOXXc7GpXa-32-32.ico" type="image/x-icon"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 
     <title>欢迎使用小程序云托管</title>
 
@@ -126,7 +128,7 @@
         table td {
             border-top: 1px solid #dddddd;
             border-bottom: 1px solid #dddddd;
-            text-align:center;
+            text-align: center;
             padding-top: 4px;
             padding-bottom: 4px;
             padding-left: 10px;
@@ -138,139 +140,316 @@
             border-bottom: 1px solid #dddddd;
             background-color: #83c2fd;
             color: #FFFFFF;
-            text-align:center;
+            text-align: center;
             padding-top: 4px;
             padding-bottom: 4px;
             padding-left: 10px;
             padding-right: 10px;
         }
 
-        .id_col{
+        .id_col {
             width: 20px;
             display: none;
         }
 
-        .record_col{
+        .record_col {
             width: 100px;
         }
 
-        .dbError{
+        .dbError {
             color: crimson;
         }
-        .testService{
+
+        .testService {
             color: chocolate;
         }
     </style>
 </head>
 
 <body>
-    <script>
-        function testService() {
-            $.ajax("/service", {
-                method: "GET",
-            }).done(function (res) {
-                $("#testService").val("服务接口：/service \n返回结果：" + res);
-            });
-        }
+<script>
+    function testService() {
+        $.ajax("/service" + getParams(false), {
+            method: "GET",
+        }).done(function (res) {
+            $("#testService1").val("服务接口：/service \n返回结果：" + res.substring(0, 8));
+            $("#testService2").val(res.substring(8));
+        });
+    }
 
-        function testDatabase() {
-            $.ajax("/database/getList", {
-                method: "GET",
-            }).done(function (res) {
-                if (res.success === true && res.data!=null) {
-
-                    $("#tab").css("display", "block");
-                    var data = res.data;
-                    var str = "";//定义用于拼接的字符串
-                    $("#tab .appendData").remove();
-                    for (var i = 0; i < data.length; i++) {
-                        //拼接表格的行和列
-                        str = "<tr class='appendData'><td class='id_col'>" + data[i].id + "</td><td class='record_col'>" + data[i].record + "</td><td>"
-                            + data[i].gmtCreate.replace(/T/g,'  ').substring(0,20) + "</td><td>" +
-                            "<a onclick='testDeleteRecord("+data[i].id+")' href='javascript:void(0);'>删除</a></td></tr>";
-                        //追加到table中
-                        $("#tab").append(str);
-                    }
-                }else {
-                    $("#dbError").val("数据库异常,请参照项目目录下README.md文件配置数据库")
+    function testDatabase() {
+        $.ajax("/database/getList" + getParams(false), {
+            method: "GET",
+        }).done(function (res) {
+            if (res.success === true && res.data != null) {
+                $("#tab").css("display", "block");
+                var data = res.data;
+                var str = "";//定义用于拼接的字符串
+                $("#tab .appendData").remove();
+                for (var i = 0; i < data.length; i++) {
+                    //拼接表格的行和列
+                    str = "<tr class='appendData'><td class='id_col'>" + data[i].id + "</td><td class='record_col'>" + data[i].record + "</td><td>"
+                        + data[i].gmtCreate.replace(/T/g, '  ').substring(0, 20) + "</td><td>" +
+                        "<a onclick='testDeleteRecord(" + data[i].id + ")' href='javascript:void(0);'>删除</a></td></tr>";
+                    //追加到table中
+                    $("#tab").append(str);
                 }
-            });
-        }
-
-        function testAddRecord() {
-            const record = $("#record").val();
-            console.log(record);
-            if (record === null || record === "") {
-                testDatabase();
-                return;
+            } else {
+                $("#dbError").val("数据库异常,请参照项目目录下README.md文件配置数据库")
             }
-            $.ajax("/database/addRecord", {
-                method: "POST",
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify({
-                    "record": $("#record").val()
-                })
-            }).done(function (res) {
-                if (res.success === false || res.data === null) {
+        });
+    }
+
+    function testQueryList() {
+        $.ajax("/file/list?folder=/cloudruntest" + getParams(true), {
+            method: "GET",
+        }).done(function (res) {
+            if (res.success === true) {
+                $("#ossTab").css("display", "block");
+                var data = res.data;
+                var str = "";//定义用于拼接的字符串
+                var path = "/cloudruntest";
+                $("#ossTab .appendOss").remove();
+                for (var i = 0; i < data.length; i++) {
+                    //拼接表格的行和列
+                    if (data[i].fileType === 'Directory') {
+                        continue;
+                    }
+                    str = "<tr class='appendOss'><td class='id_col'>" + data[i].fileId + "</td><td class='record_col'>" + data[i].fileName + "</td><td>"
+                        + data[i].fileId + "</td><td>" +
+                        "<a href='javascript:void(0);' onclick=\"testDeleteFile('" + path + "','" + data[i].fileName + "')\">删除</a>" +
+                        "<a href='" + data[i].downloadUrl + "'>下载</a>" +
+                        "</td></tr>";
+                    $("#ossTab").append(str);
+                }
+            } else {
+                $("#ossError").val("oss服务异常,请联系云托管运营同学开通oss服务")
+            }
+        });
+    }
+
+
+    function testUpload() {
+        // 阻止表单默认的提交事件
+        event.preventDefault();
+        // 文件上传的要求数据格式form-data 在js中新建一个FormData的类对象
+        // 把上传的文件放入FormData对象中即可
+        var formData = new FormData();
+        formData.append("file", $("#singleInput")[0].files[0]);
+        $.ajax({
+            type: "post",  //请求类型
+            url: "/file/upload" + getParams(false), //请求后端的地址
+            data: formData,  // 向后端发送的数据
+            processData: false,//阻止jquery对formData数据进行加工处理
+            contentType: false,//阻止jquery修改formData数据的类型
+        }).done(function (res) {
+            if (res.success === false || res.data === null) {
+                $("#ossError").val("数据库异常,请参照项目目录下README.md文件配置数据库")
+            }
+            testQueryList();
+        });
+    }
+
+    function testDeleteFile(folder, fileName) {
+        $.ajax({
+            type: "post", // 以post方式发起请求
+            contentType: "application/json; charset=utf-8",
+            url: "/file/delete?folder=" + folder + "&fileName=" + fileName + getParams(true),
+            success(data) {
+                if (data.success === false) {
+                    $("#ossError").val("oss异常,请参照项目目录下README.md文件配置数据库")
+                }
+                testQueryList();
+            }
+        })
+    }
+
+    function testAddRecord() {
+        const record = $("#record").val();
+        if (record === null || record === "") {
+            testDatabase();
+            return;
+        }
+        $.ajax("/database/addRecord" + getParams(false), {
+            method: "POST",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                "record": $("#record").val()
+            })
+        }).done(function (res) {
+            if (res.success === false) {
+                $("#dbError").val("数据库异常,请参照项目目录下README.md文件配置数据库")
+            }
+            testDatabase();
+        });
+    }
+
+    function testDeleteRecord(id) {
+        $.ajax({
+            type: "get", // 以get方式发起请求
+            contentType: "application/json; charset=utf-8",
+            url: "/database/deleteRecord?id=" + id + getParams(true),
+            success(data) {
+                if (data.success === false || data.data === null) {
                     $("#dbError").val("数据库异常,请参照项目目录下README.md文件配置数据库")
                 }
                 testDatabase();
-            });
-        }
+            }
+        })
+    }
 
-        function testDeleteRecord(id) {
-            $.ajax({
-                type: "get", // 以get方式发起请求
-                contentType: "application/json; charset=utf-8",
-                url: "/database/deleteRecord?id=" + id,
-                success(data) {
-                    if (data.success === false || data.data === null) {
-                        $("#dbError").val("数据库异常,请参照项目目录下README.md文件配置数据库")
-                    }
-                    testDatabase();
+    function getParams(type) {
+        let params = window.location.search;
+        if (params == '' || params.indexOf('?') != 0) {
+            return '';
+        }
+        if (type) {
+            params = params.replace('?', '&');
+        }
+        return params;
+    }
+
+    function testShowRedis() {
+        $("#tabRedis").css("display", "block");
+    }
+
+    function testRedisSet() {
+        const key = $("#key").val();
+        const value = $("#value").val();
+        $.ajax({
+            type: "get", // 以get方式发起请求
+            contentType: "application/json; charset=utf-8",
+            url: "/redis/set?key=" + key + "&value=" + value + getParams(true),
+            success(res) {
+                if (!res.success) {
+                    $("#redisError").val(
+                        "Redis异常,请参照项目目录下README.md文件配置Redis"
+                    );
+                    $("#value").val("赋值失败");
+                } else {
+                    $("#value").val("赋值成功");
                 }
-            })
-        }
-    </script>
+            },
+        });
+    }
 
-    <div class="container">
-        <div class="title">
-            <img class="title-logo" src="img/logo.png"/>
-            <div style="display: inline; margin-bottom: 48px" class="title-text">欢迎使用小程序云托管</div>
-        </div>
+    function testRedisGet() {
+        const key = $("#key").val();
+        $.ajax({
+            type: "get", // 以get方式发起请求
+            contentType: "application/json; charset=utf-8",
+            url: "/redis/get?key=" + key + getParams(true),
+            success(res) {
+                if (!res.success) {
+                    $("#redisError").val(
+                        "Redis异常,请参照项目目录下README.md文件配置Redis"
+                    );
+                    $("#value").val("取值失败");
+                } else if (res.data == null || res.data == '') {
+                    $("#value").val("nil");
+                } else {
+                    $("#value").val(res.data);
+                }
+            },
+        });
+    }
+</script>
 
-        <span class="list-text">服务发布与访问</span>
-        <button type="button" onclick="testService()" class="button_test">测试服务访问</button>
-        <output id="testService" class="testService"></output>
-        <br/>
+<div class="container">
+    <div class="title">
+        <img class="title-logo" src="img/logo.png"/>
+        <div style="display: inline; margin-bottom: 48px" class="title-text">欢迎使用小程序云托管</div>
+    </div>
 
-        <span class="list-text">数据库服务</span>
-        <button type="button" onclick="testDatabase()" class="button_test">测试数据库访问</button>
-        <output id="dbError" class="dbError"></output>
-        <table id="tab" style="display: none">
+    <span class="list-text">服务发布与访问</span>
+    <button type="button" onclick="testService()" class="button_test">测试服务访问</button>
+    <output id="testService1" class="testService1"></output>
+    <output id="testService2" class="testService2"></output>
+    <br/>
+
+    <span class="list-text">数据库服务</span>
+    <button type="button" onclick="testDatabase()" class="button_test">测试数据库访问</button>
+    <output id="dbError" class="dbError"></output>
+    <table id="tab" style="display: none">
+        <tr>
+            <td colspan="4">
+                <div>
+                    <input type="text" placeholder="请输入..." id="record"/>
+                    <button type="button" onclick="testAddRecord()" class="button_add">插入一条记录</button>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th hidden="hidden" style="width: 20px">id</th>
+            <th style="width: 100px">记录信息</th>
+            <th style="width: 180px">创建时间</th>
+            <th style="width: 40px">操作</th>
+        </tr>
+    </table>
+    <br/>
+
+    <span class="list-text">缓存服务</span>
+    <button type="button" onclick="testShowRedis()" class="button_test">
+        测试缓存服务
+    </button>
+    <output id="redisError" class="redisError"></output>
+    <div id="tabRedis" style="display: none">
+        <table style="margin-bottom: 12px">
             <tr>
-                <td colspan="4">
-                    <div>
-                        <input type="text" placeholder="请输入..." id="record" />
-                        <button type="button" onclick="testAddRecord()" class="button_add">插入一条记录</button>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <th hidden="hidden" style="width: 20px">id</th>
-                <th style="width: 100px">记录信息</th>
-                <th style="width: 180px">创建时间</th>
+                <th style="width: 100px">key</th>
+                <th style="width: 180px">value</th>
                 <th style="width: 40px">操作</th>
             </tr>
         </table>
 
-        <br/><br/><br/>
-        <span class="foot-text">快速入手</span>
-        <hr style="display: block; width: 320px"/>
-        <a href="https://opendocs.alipay.com/pre-open/04n0zd" target="_blank">
-            开发者文档
-        </a>
+        <div class="tableStyle">
+            <input type="text" placeholder="请输入key..." id="key"/>
+            <input type="text" placeholder="value..." id="value"/>
+            <button type="button" onclick="testRedisSet()" class="button_add">
+                赋值
+            </button>
+            <button type="button" onclick="testRedisGet()" class="button_add">
+                取值
+            </button>
+        </div>
     </div>
+    <br/>
+
+    <span class="list-text">oss服务</span>
+    <button type="button" onclick="testQueryList()" class="button_test">
+        测试oss服务
+    </button>
+    <output id="ossError" class="ossError"></output>
+    <table id="ossTab" style="display: none">
+        <tr>
+        <tr>
+            <td colspan="4">
+                <div>
+                    <form id="singleUpload">
+                        <input type="file" accept="image/*,.txt" name="file" id="singleInput">
+                        <button type="button" onclick="testUpload()" class="button_add">
+                            文件上传
+                        </button>
+                    </form>
+
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th hidden="hidden" style="width: 20px">文件id</th>
+            <th style="width: 100px">文件名</th>
+            <th style="width: 180px">文件id</th>
+            <th style="width: 40px">操作</th>
+        </tr>
+    </table>
+
+    <br/><br/><br/>
+    <span class="foot-text">快速入手</span>
+    <hr style="display: block; width: 320px"/>
+    <a href="https://opendocs.alipay.com/pre-open/04n0zd" target="_blank">
+        开发者文档
+    </a>
+</div>
 
 </body>
 

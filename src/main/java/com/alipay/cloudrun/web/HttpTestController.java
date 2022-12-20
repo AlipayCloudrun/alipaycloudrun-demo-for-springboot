@@ -6,9 +6,8 @@ package com.alipay.cloudrun.web;
 
 import com.alipay.cloudrun.aop.annotation.ControllerPointCut;
 import com.alipay.cloudrun.client.SimpleFeignClient;
-import javax.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,29 +18,24 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class HttpTestController {
 
-    /**
-     * LOGGER
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger("BIZOPS-MVC-LOGGER");
-
     @Autowired
     private SimpleFeignClient simpleFeignClient;
 
     /**
-     * request
+     * 微服务接口，用户可根据实际情况调用
+     *
+     * @return
      */
-    @Autowired
-    private HttpServletRequest request;
+    @ControllerPointCut
+    @GetMapping("/service2")
+    public String service2() {
+        return simpleFeignClient.service();
+    }
 
     @ControllerPointCut
     @GetMapping("/service")
     public String service() {
-        return simpleFeignClient.service2();
-    }
-
-    @ControllerPointCut
-    @GetMapping("/service2")
-    public String service2() {
-        return "服务调用成功!TimeStamp is" + System.currentTimeMillis();
+        String result = "欢迎使用云托管!服务版本：" + System.getenv("PUB_SERVICE_REVISION") + "\n实例主机：" + System.getenv("HOSTNAME") + "\n当前时间：" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        return result;
     }
 }
