@@ -4,7 +4,6 @@
  */
 package com.alipay.cloudrun.web.request;
 
-import java.math.BigInteger;
 import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -56,8 +56,11 @@ public class ControllerAspect {
             ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             HttpServletRequest request = attributes.getRequest();
             String call = request.getRequestURI();
-            String str = JSON.toJSONString(Arrays.asList(joinPoint.getArgs()));
-            String msg = String.format("[%d],[%s],[%dms],[%s],%s", threadID, call, rt, res ? "Y" : "N", str);
+            String str = "";
+            if (!call.equals("/file/upload")) {
+                str = JSON.toJSONString(Arrays.asList(joinPoint.getArgs()));
+            }
+            String msg = String.format("%d,%s,%dms,%s,%s", threadID, call, rt, res ? "Y" : "N", str);
 
             if (logger.isInfoEnabled()) {
                 logger.info(msg);

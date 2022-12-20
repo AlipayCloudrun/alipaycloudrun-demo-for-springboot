@@ -43,6 +43,10 @@ public class Result<T> {
         return new Result<>(true);
     }
 
+    public static <T> Result<T> fail() {
+        return new Result<>(false);
+    }
+
     public static <T> Result<T> success(T data) {
         Result<T> response = new Result<>(true);
         response.setData(data);
@@ -54,6 +58,12 @@ public class Result<T> {
         result.setErrorCode(result.getErrorCode());
         result.setErrorMessage(result.getErrorMessage());
         return result;
+    }
+
+    public static <T> Result<T> fail(T data) {
+        Result<T> response = new Result<>(false);
+        response.setData(data);
+        return response;
     }
 
 }

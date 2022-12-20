@@ -11,7 +11,7 @@ COPY . .
 RUN mvn -B -e -U -s settings.xml clean package
 
 # 采用java或者alpine官方镜像做为运行时镜像
-FROM alpine:3.13 
+FROM alpine:3.13
 
 # 设置应用工作目录
 WORKDIR /app
