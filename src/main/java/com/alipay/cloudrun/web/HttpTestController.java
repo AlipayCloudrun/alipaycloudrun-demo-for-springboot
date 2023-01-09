@@ -6,7 +6,6 @@ package com.alipay.cloudrun.web;
 
 import com.alipay.cloudrun.aop.annotation.ControllerPointCut;
 import com.alipay.cloudrun.client.SimpleFeignClient;
-import org.apache.skywalking.apm.toolkit.trace.TraceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
