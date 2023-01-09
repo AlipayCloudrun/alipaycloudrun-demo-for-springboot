@@ -57,6 +57,7 @@ hs_err_pid*
 #=====================         https://github.com/github/gitignore/blob/master/Maven.gitignore        ==================
 #=======================================================================================================================
 target/
+logs/
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
