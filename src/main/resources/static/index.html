@@ -249,7 +249,7 @@
                 $("#tab .appendData").remove();
                 for (var i = 0; i < data.length; i++) {
                     //拼接表格的行和列
-                    str = "<tr class='appendData'><td class='id_col'>" + data[i].id + "</td><td class='record_col'>" + data[i].record + "</td><td>"
+                    str = "<tr class='appendData'><td class='id_col'>" + data[i].id + "</td><td class='record_col'>" + data[i].record + "</td><td class='record_col'>"
                         + data[i].gmtCreate.replace(/T/g, '  ').substring(0, 20) + "</td><td>" +
                         "<a onclick='testDeleteRecord(" + data[i].id + ")' href='javascript:void(0);'>删除</a></td></tr>";
                     //追加到table中
@@ -285,7 +285,7 @@
                         continue;
                     }
                     str = "<tr class='appendOss'><td class='id_col'>" + data[i].fileId + "</td><td class='record_col'>" + data[i].fileName + "</td><td>"
-                        + data[i].fileId + "</td><td>" +
+                        + data[i].fileType + "</td><td>" +
                         "<a href='javascript:void(0);' onclick=\"testDeleteFile('" + path + "','" + data[i].fileName + "')\">删除</a>" +
                         "<a href='" + data[i].downloadUrl + "'>下载</a>" +
                         "</td></tr>";
@@ -536,28 +536,29 @@
     </button>
     <output id="ossError" class="ossError"></output>
     <div style="width: 100%;display: flex;justify-content: center;">
-    <table id="ossTab" style="width: 340px;">
-        <tr>
-        <tr>
-            <td colspan="4">
-                <div>
-                    <form id="singleUpload">
-                        <input type="file" accept="image/*,.txt" name="file" id="singleInput">
-                        <button type="button" onclick="testUpload()" class="button_add">
-                            文件上传
-                        </button>
-                    </form>
+        <table id="ossTab" style="display: none; width: 340px;">
+            <tr>
+            <tr>
+                <td colspan="4">
+                    <div>
+                        <form id="singleUpload">
+                            <input type="file" accept="image/*,.txt" name="file" id="singleInput">
+                            <button type="button" onclick="testUpload()" class="button_add"
+                                    style="width: 50px !important;margin: right 10px;">
+                                文件上传
+                            </button>
+                        </form>
 
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <th hidden="hidden" style="width: 20px">文件id</th>
-            <th style="width: 100px">文件名</th>
-            <th style="width: 180px">文件id</th>
-            <th style="width: 40px">操作</th>
-        </tr>
-    </table>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th hidden="hidden" style="width: 20px">文件id</th>
+                <th style="width: 100px !important">文件名</th>
+                <th style="width: 180px !important">文件类型</th>
+                <th style="width: 60px !important">操作</th>
+            </tr>
+        </table>
     </div>
     <br/><br/><br/>
     <span class="foot-text">快速入手</span>
