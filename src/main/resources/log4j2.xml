@@ -3,7 +3,7 @@
     <appenders>
         <!-- 控制台输出 -->
         <console name="STDOUT-APPENDER" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5p %c{2} %L %M - %msg%n"/>
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5p %c{2} %L %M %traceId,%msg%n"/>
         </console>
 
         <!-- fileName：输出路径  filePattern：命名规则 -->
@@ -13,7 +13,7 @@
                 <ThresholdFilter level="all" onMatch="ACCEPT" onMismatch="DENY"/>
             </Filters>
             <!-- 输出格式 -->
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p %c{2} %L %M - %msg%n" charset="UTF-8"/>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p %c{2} %L %M %traceId,%msg%n" charset="UTF-8"/>
             <Policies>
                 <!--  每天生成一个日志文件  -->
                 <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
@@ -31,7 +31,7 @@
                 <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
             </Filters>
             <!-- 输出格式 -->
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p %c{2} %L %M - %msg%xEx%n"
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p %c{2} %L %M %traceId,%msg%xEx%n"
                            charset="UTF-8"/>
             <Policies>
                 <!--  每天生成一个日志文件  -->
@@ -47,7 +47,7 @@
                      filePattern="logs/dal-digest.log.%d{yyyy-MM-dd}"
             append="true">
             <PatternLayout
-                    pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p %c{2} - %m%n%throwable"
+                    pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p %c{2} %traceId,%m%n%throwable"
                     charset="UTF-8"/>
             <Policies>
                 <TimeBasedTriggeringPolicy/>
@@ -60,7 +60,7 @@
                      filePattern="logs/mvc-digest.log.%d{yyyy-MM-dd}"
             append="true">
             <PatternLayout
-                    pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p %c{2} - %m%n%throwable"
+                    pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p %c{2} %traceId,%m%n%throwable"
                     charset="UTF-8"/>
             <Policies>
                 <TimeBasedTriggeringPolicy/>
@@ -72,7 +72,7 @@
                      filePattern="logs/sal-digest.log.%d{yyyy-MM-dd}"
                      append="true">
             <PatternLayout
-                    pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p %c{2} - %m%n%throwable"
+                    pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p %c{2} %traceId,%m%n%throwable"
                     charset="UTF-8"/>
             <Policies>
                 <TimeBasedTriggeringPolicy/>

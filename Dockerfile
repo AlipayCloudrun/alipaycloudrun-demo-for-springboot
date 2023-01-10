@@ -32,4 +32,12 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN ln -snf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
     echo Asia/Shanghai > /etc/timezone
 
-CMD ["java", "-jar", "antcloud-0.0.1-SNAPSHOT.jar"]
+# 下载蚂蚁版本链路追踪agent
+RUN curl https://ant-trace.opentrscdn.com/skywalking-agent.tar.gz --output /app/skywalking-agent.tar.gz
+# 解压至指定路径
+RUN tar -zxvf /app/skywalking-agent.tar.gz -C /app
+
+
+# 运行启动命令
+CMD java -javaagent:/app/skywalking-agent/skywalking-agent.jar \
+         -jar antcloud-0.0.1-SNAPSHOT.jar
