@@ -42,10 +42,8 @@ REDIS_PASSWORD:缓存服务密码，开通缓存服务时的密码
 #### 6.oss服务
 前往云托管平台：首先去开通**对象存储**，新建文件夹/cloudruntest用于测试。之后联系云托管运营同学开通白名单账号，然后可以在服务设置中设置如下key\value对。
 ```text
-CLOUDRUN_PAASCORE_APPID:用户自己的appid，可在云托管平台右上角找到
 OSS_PUBLIC_KEY:支付宝公钥，可在支付宝开放平台获取
 OSS_PRIVATE_KEY:应用私钥
-CLOUDRUN_PAASCORE_ENVID:小程序环境id，可在云托管平台左上角出获取
 ```
 关于密钥的使用可在[支付宝开放平台](https://open.alipay.com/)
 设置，具体步骤：
