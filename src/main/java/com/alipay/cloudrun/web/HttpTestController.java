@@ -6,8 +6,6 @@ package com.alipay.cloudrun.web;
 
 import com.alipay.cloudrun.aop.annotation.ControllerPointCut;
 import com.alipay.cloudrun.client.SimpleFeignClient;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,7 +33,9 @@ public class HttpTestController {
     @ControllerPointCut
     @GetMapping("/service")
     public String service() {
-        String result = "欢迎使用云托管!服务版本：" + System.getenv("PUB_SERVICE_REVISION") + "\n实例主机：" + System.getenv("HOSTNAME") + "\n当前时间：" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String version = System.getenv("PUB_SERVICE_REVISION") == null ? "springboot-demo" : System.getenv("PUB_SERVICE_REVISION");
+        String hostName = System.getenv("HOSTNAME") == null ? "springboot-demo" : System.getenv("HOSTNAME");
+        String result = "欢迎使用云托管!&服务版本：" + version + "&实例主机：" + hostName;
         return result;
     }
 }

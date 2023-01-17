@@ -118,6 +118,17 @@
             cursor: pointer;
         }
 
+        .button_file {
+            text-align: right;
+            font-size: 10px;
+            color: #FFFFFF;
+            background-color: #4C9AF7;
+            border: none;
+            border-radius: 4px;
+            margin-top: 4px;
+            cursor: pointer;
+        }
+
         table {
             border-collapse: collapse;
             border: 1px solid #dddddd;
@@ -160,7 +171,15 @@
             color: crimson;
         }
 
-        .testService {
+        .redisError {
+            color: crimson;
+        }
+
+        .ossError {
+            color: crimson;
+        }
+
+        .testService3 {
             color: chocolate;
         }
     </style>
@@ -168,27 +187,80 @@
 
 <body>
 <script>
-    function testService() {
+    function getDateTime() {
+        let now = new Date();
+        let year = now.getFullYear(); //得到年份
+        let month = now.getMonth();//得到月份
+        let date = now.getDate();//得到日期
+        let day = now.getDay();//得到周几
+        let hour = now.getHours();//得到小时
+        let minu = now.getMinutes();//得到分钟
+        let sec = now.getSeconds();//得到秒
+        month = month + 1;
+        if (month < 10) month = "0" + month;
+        if (date < 10) date = "0" + date;
+        if (hour < 10) hour = "0" + hour;
+        if (minu < 10) minu = "0" + minu;
+        if (sec < 10) sec = "0" + sec;
+        var time = "";
+        time = year + "-" + month + "-" + date + " " + hour + ":" + minu + ":" + sec;
+        return time;
+    }
+
+    function testService(flag) {
         $.ajax("/service" + getParams(false), {
             method: "GET",
+            contentType: "application/json; charset=utf-8",
         }).done(function (res) {
-            $("#testService1").val("服务接口：/service \n返回结果：" + res.substring(0, 8));
-            $("#testService2").val(res.substring(8));
+            if (flag) {
+                if ($("#serviceTab").css("display") === "none") {
+                    $("#serviceTab").css("display", "block");
+                } else {
+                    $("#serviceTab").css("display", "none");
+                }
+            } else {
+                $("#serviceTab").css("display", "block");
+            }
+            let str = "服务接口：/service&返回结果：";
+            str = str + res + "&当前时间：" + getDateTime();
+            let data = str.split("&");
+            let ss = "";
+            $("#serviceTab .serviceData").remove();
+            for (var i = 0; i < data.length; i++) {
+                let strArr = data[i].split("：");
+                //拼接表格的行和列
+                ss =
+                    "<tr class='serviceData'><td class='service_col'>" +
+                    strArr[0] +
+                    "</td><td class='record_col'>" +
+                    strArr[1] +
+                    "</td></tr>";
+                //追加到table中
+                $("#serviceTab").append(ss);
+            }
         });
     }
 
-    function testDatabase() {
+    function testDatabase(flag) {
         $.ajax("/database/getList" + getParams(false), {
             method: "GET",
         }).done(function (res) {
             if (res.success === true && res.data != null) {
-                $("#tab").css("display", "block");
+                if (flag) {
+                    if ($("#tab").css("display") === "none") {
+                        $("#tab").css("display", "block");
+                    } else {
+                        $("#tab").css("display", "none");
+                    }
+                } else {
+                    $("#tab").css("display", "block");
+                }
                 var data = res.data;
                 var str = "";//定义用于拼接的字符串
                 $("#tab .appendData").remove();
                 for (var i = 0; i < data.length; i++) {
                     //拼接表格的行和列
-                    str = "<tr class='appendData'><td class='id_col'>" + data[i].id + "</td><td class='record_col'>" + data[i].record + "</td><td>"
+                    str = "<tr class='appendData'><td class='id_col'>" + data[i].id + "</td><td class='record_col'>" + data[i].record + "</td><td class='record_col'>"
                         + data[i].gmtCreate.replace(/T/g, '  ').substring(0, 20) + "</td><td>" +
                         "<a onclick='testDeleteRecord(" + data[i].id + ")' href='javascript:void(0);'>删除</a></td></tr>";
                     //追加到table中
@@ -200,12 +272,20 @@
         });
     }
 
-    function testQueryList() {
+    function testQueryList(flag) {
         $.ajax("/file/list?folder=/cloudruntest" + getParams(true), {
             method: "GET",
         }).done(function (res) {
             if (res.success === true) {
-                $("#ossTab").css("display", "block");
+                if (flag) {
+                    if ($("#ossTab").css("display") === "none") {
+                        $("#ossTab").css("display", "block");
+                    } else {
+                        $("#ossTab").css("display", "none");
+                    }
+                } else {
+                    $("#ossTab").css("display", "block");
+                }
                 var data = res.data;
                 var str = "";//定义用于拼接的字符串
                 var path = "/cloudruntest";
@@ -216,9 +296,10 @@
                         continue;
                     }
                     str = "<tr class='appendOss'><td class='id_col'>" + data[i].fileId + "</td><td class='record_col'>" + data[i].fileName + "</td><td>"
-                        + data[i].fileId + "</td><td>" +
+                        + data[i].fileType + "</td><td>" +
                         "<a href='javascript:void(0);' onclick=\"testDeleteFile('" + path + "','" + data[i].fileName + "')\">删除</a>" +
-                        "<a href='" + data[i].downloadUrl + "'>下载</a>" +
+                        "<a>&nbsp;</a>" +
+                        "<a href='" + data[i].downloadUrl + "'>下载</a></div>" +
                         "</td></tr>";
                     $("#ossTab").append(str);
                 }
@@ -246,7 +327,7 @@
             if (res.success === false || res.data === null) {
                 $("#ossError").val("数据库异常,请参照项目目录下README.md文件配置数据库")
             }
-            testQueryList();
+            testQueryList(false);
         });
     }
 
@@ -259,7 +340,7 @@
                 if (data.success === false) {
                     $("#ossError").val("oss异常,请参照项目目录下README.md文件配置数据库")
                 }
-                testQueryList();
+                testQueryList(false);
             }
         })
     }
@@ -267,7 +348,7 @@
     function testAddRecord() {
         const record = $("#record").val();
         if (record === null || record === "") {
-            testDatabase();
+            testDatabase(false);
             return;
         }
         $.ajax("/database/addRecord" + getParams(false), {
@@ -280,7 +361,7 @@
             if (res.success === false) {
                 $("#dbError").val("数据库异常,请参照项目目录下README.md文件配置数据库")
             }
-            testDatabase();
+            testDatabase(false);
         });
     }
 
@@ -293,7 +374,7 @@
                 if (data.success === false || data.data === null) {
                     $("#dbError").val("数据库异常,请参照项目目录下README.md文件配置数据库")
                 }
-                testDatabase();
+                testDatabase(false);
             }
         })
     }
@@ -310,27 +391,43 @@
     }
 
     function testShowRedis() {
-        $("#tabRedis").css("display", "block");
+        if (testRedisSet(true)) {
+            if ($("#tabRedis").css("display") === "none") {
+                $("#tabRedis").css("display", "block");
+            } else {
+                $("#tabRedis").css("display", "none");
+            }
+        }
     }
 
-    function testRedisSet() {
-        const key = $("#key").val();
-        const value = $("#value").val();
+    function testRedisSet(flag) {
+        let result = true;
+        let key = 'test';
+        let value = 'test';
+        if (!flag) {
+            key = $("#key").val();
+            value = $("#value").val();
+        }
         $.ajax({
             type: "get", // 以get方式发起请求
             contentType: "application/json; charset=utf-8",
             url: "/redis/set?key=" + key + "&value=" + value + getParams(true),
+            async: false,
             success(res) {
                 if (!res.success) {
                     $("#redisError").val(
                         "Redis异常,请参照项目目录下README.md文件配置Redis"
                     );
                     $("#value").val("赋值失败");
+                    result = false;
                 } else {
-                    $("#value").val("赋值成功");
+                    if (!flag) {
+                        $("#value").val("赋值成功");
+                    }
                 }
             },
         });
+        return result;
     }
 
     function testRedisGet() {
@@ -360,89 +457,115 @@
         <img class="title-logo" src="img/logo.png"/>
         <div style="display: inline; margin-bottom: 48px" class="title-text">欢迎使用小程序云托管</div>
     </div>
-
-    <span class="list-text">服务发布与访问</span>
-    <button type="button" onclick="testService()" class="button_test">测试服务访问</button>
-    <output id="testService1" class="testService1"></output>
-    <output id="testService2" class="testService2"></output>
+    <button type="button" onclick="testService(true)" class="button_test">
+        测试服务
+    </button>
+    <div style="width: 100%;display: flex;justify-content: center;">
+        <table id="serviceTab" style="display: none;width: 340px;">
+            <tr>
+                <td colspan="2">
+                    <div>
+                        <button type="button" onclick="testService(false)" class="button_add">
+                            重新查询
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th style="width: 160px">服务指标</th>
+                <th style="width: 180px">指标信息</th>
+            </tr>
+        </table>
+    </div>
     <br/>
 
-    <span class="list-text">数据库服务</span>
-    <button type="button" onclick="testDatabase()" class="button_test">测试数据库访问</button>
+    <button type="button" onclick="testDatabase(true)" class="button_test">
+        测试数据库访问
+    </button>
     <output id="dbError" class="dbError"></output>
-    <table id="tab" style="display: none">
-        <tr>
-            <td colspan="4">
-                <div>
-                    <input type="text" placeholder="请输入..." id="record"/>
-                    <button type="button" onclick="testAddRecord()" class="button_add">插入一条记录</button>
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <th hidden="hidden" style="width: 20px">id</th>
-            <th style="width: 100px">记录信息</th>
-            <th style="width: 180px">创建时间</th>
-            <th style="width: 40px">操作</th>
-        </tr>
-    </table>
+    <div style="width: 100%;display: flex;justify-content: center;">
+        <table id="tab" style="display: none;width: 340px;">
+            <tr>
+                <td colspan="4">
+                    <div>
+                        <input type="text" placeholder="请输入..." id="record"/>
+                        <button type="button" onclick="testAddRecord()" class="button_add">
+                            插入一条记录
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th hidden="hidden" style="width: 20px">id</th>
+                <th style="width: 100px">记录信息</th>
+                <th style="width: 180px">创建时间</th>
+                <th style="width: 40px">操作</th>
+            </tr>
+        </table>
+    </div>
     <br/>
 
-    <span class="list-text">缓存服务</span>
     <button type="button" onclick="testShowRedis()" class="button_test">
         测试缓存服务
     </button>
     <output id="redisError" class="redisError"></output>
-    <div id="tabRedis" style="display: none">
-        <table style="margin-bottom: 12px">
+    <div style="width: 100%;display: flex;justify-content: center;">
+        <table id="tabRedis" style="display: none; width: 340px;">
             <tr>
                 <th style="width: 100px">key</th>
                 <th style="width: 180px">value</th>
-                <th style="width: 40px">操作</th>
+                <th style="width: 80px">操作</th>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" placeholder="请输入key..." id="key" width="100px"
+                           style="width: 80px !important"/>
+                </td>
+                <td>
+                    <input type="text" placeholder="value..." id="value" width="180px"
+                           style="width: 80px !important"/>
+                </td>
+                <td>
+                    <div style="display: flex;">
+                        <a onclick='testRedisSet(false)' href='javascript:void(0);'
+                           style="width: 40px !important">赋值</a>
+                        <a onclick='testRedisGet()' href='javascript:void(0);' style="width: 40px !important">取值</a>
+                    </div>
+
+                </td>
             </tr>
         </table>
-
-        <div class="tableStyle">
-            <input type="text" placeholder="请输入key..." id="key"/>
-            <input type="text" placeholder="value..." id="value"/>
-            <button type="button" onclick="testRedisSet()" class="button_add">
-                赋值
-            </button>
-            <button type="button" onclick="testRedisGet()" class="button_add">
-                取值
-            </button>
-        </div>
     </div>
     <br/>
 
-    <span class="list-text">oss服务</span>
-    <button type="button" onclick="testQueryList()" class="button_test">
+    <button type="button" onclick="testQueryList(true)" class="button_test">
         测试oss服务
     </button>
     <output id="ossError" class="ossError"></output>
-    <table id="ossTab" style="display: none">
-        <tr>
-        <tr>
-            <td colspan="4">
-                <div>
-                    <form id="singleUpload">
-                        <input type="file" accept="image/*,.txt" name="file" id="singleInput">
-                        <button type="button" onclick="testUpload()" class="button_add">
-                            文件上传
-                        </button>
-                    </form>
+    <div style="width: 100%;display: flex;justify-content: center;">
+        <table id="ossTab" style="display: none; width: 340px;">
+            <tr>
+            <tr>
+                <td colspan="4">
+                    <div>
+                        <form id="singleUpload">
+                            <input type="file" accept="image/*,.txt" name="file" id="singleInput">
+                            <button type="button" onclick="testUpload()" class="button_file">
+                                文件上传
+                            </button>
+                        </form>
 
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <th hidden="hidden" style="width: 20px">文件id</th>
-            <th style="width: 100px">文件名</th>
-            <th style="width: 180px">文件id</th>
-            <th style="width: 40px">操作</th>
-        </tr>
-    </table>
-
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th hidden="hidden" style="width: 20px">id</th>
+                <th style="width: 100px !important">文件名</th>
+                <th style="width: 160px !important">类型</th>
+                <th style="width: 180px !important">操作</th>
+            </tr>
+        </table>
+    </div>
     <br/><br/><br/>
     <span class="foot-text">快速入手</span>
     <hr style="display: block; width: 320px"/>
