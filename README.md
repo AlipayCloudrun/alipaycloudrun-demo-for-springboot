@@ -6,12 +6,13 @@
 ## 云托管部署
 #### 1.下载代码
 #### 2.快速部署
-前往[小程序云托管快速部署](https://opendocs.alipay.com/pre-open/04n0zd),
-可选择手工打镜像上传或直接上传代码文件夹部署，服务端口及探活端口填写80
+登录[小程序云托管平台](https://cloudrun.alipay.com/cloudrun), 
+参考[小程序云部署文档](https://opendocs.alipay.com/pre-open/04h7dl?pathHash=95a00223),
+可选择上传代码、镜像发布、自定义流水线发布部署，服务端口及探活端口填写80
 #### 3.服务访问
 在部署完成之后，前往云托管平台下的**服务列表**，找到自己的服务并进入，在**服务设置**开启公网域名，之后在浏览器里访问公网域名即进入欢迎页面。
 #### 4.数据库连接
-用户需要前往云托管平台开通[数据服务](https://opendocs.alipay.com/pre-open/04mphd),
+用户需要前往云托管平台下的**数据存储**下**数据库**开通数据库服务，[开通文档](https://opendocs.alipay.com/pre-open/06t5ww?pathHash=d4c5d8b5),
 设置账号密码并建库表，表创建可参考
 ```sql
 USE database;
