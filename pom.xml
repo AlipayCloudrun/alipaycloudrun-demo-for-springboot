@@ -46,7 +46,7 @@
             </exclusions>
         </dependency>
 
-        <!--log4j2-->
+        <!--log4j-->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
