@@ -12,16 +12,16 @@ import java.util.List;
 @Service
 public class ElasticScalingServiceImpl implements ElasticScalingService{
     private final List<Thread> threads = new ArrayList<>();
-    private volatile boolean      running = true;
+    private volatile boolean      running = false;
 
     @Override
-    public void cpuUpdate(int percentage) {
+    public void cpuUpdate(int percentage)  {
         running = true;
         for (int i = 0; i < Runtime.getRuntime().availableProcessors(); i++) {
             Thread thread = new Thread(() -> {
                 // 调整循环次数以微调CPU载荷。可以从1开始逐步增加
                 // 繁忙时间，单位纳秒
-                long busyTime = 3* 1_000_000;
+                long busyTime = 10* 1_000_000;
                 // 空闲时间，单位纳秒
                 long idleTime = busyTime * (100 - percentage) / percentage;
                 // 繁忙等待

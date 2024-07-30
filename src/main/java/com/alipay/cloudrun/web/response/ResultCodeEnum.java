@@ -24,6 +24,11 @@ public enum ResultCodeEnum {
     OSS_ERROR("OSS_ERROR", "OSS异常"),
 
     /**
+     * 弹性伸缩入参异常
+     */
+    ELASTIC_SCALE_PARAM_ERROR("ELASTIC_SCALE_PARAM_ERROR", "弹性伸缩入参异常，请保证是整数并且在0-80之间"),
+
+    /**
      * 缓存异常
      */
     REDIS_ERROR("REDIS_ERROR", "缓存异常,请检查Redis配置");
