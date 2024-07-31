@@ -4,6 +4,7 @@
  */
 package com.alipay.cloudrun.web.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
@@ -57,6 +58,13 @@ public class Result<T> {
         Result<T> result = new Result<>(false);
         result.setErrorCode(result.getErrorCode());
         result.setErrorMessage(result.getErrorMessage());
+        return result;
+    }
+
+    public static <T> Result<T> error(ResultCodeEnum resultCodeEnum){
+        Result<T> result = new Result<>(false);
+        result.setErrorCode(resultCodeEnum.getResultCode());
+        result.setErrorMessage(resultCodeEnum.getResultMessage());
         return result;
     }
 
