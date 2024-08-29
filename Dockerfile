@@ -1,5 +1,5 @@
 # 采用java官方镜像做为构建镜像
-FROM registry.cloudrun.cloudbaseapp.cn/cloudrun/maven:3.6.0-jdk-8-slim AS build
+FROM registry.run.alipay.net/cloudrun/maven:3.6.0-jdk-8-slim AS build
 
 # 设置应用工作目录
 WORKDIR /app
